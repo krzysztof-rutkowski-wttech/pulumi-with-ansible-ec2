@@ -1,0 +1,21 @@
+
+---
+- hosts: ${HOST_IP_ADDRESS}
+  become: true
+  tasks:
+    - name: Install Nginx web server
+      command: amazon-linux-extras install nginx1.12=latest -y
+      args:
+        creates: /sbin/nginx
+
+    - name: Create default index page
+      copy:
+        dest: /usr/share/nginx/html/index.html
+        content: "Hello from ${HOST_IP_ADDRESS} :-)"
+
+    - name: Make sure 'nginx' is started
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+      register: result

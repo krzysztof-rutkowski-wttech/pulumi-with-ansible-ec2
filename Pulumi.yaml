@@ -1,0 +1,3 @@
+name: pulumi-ec2
+runtime: nodejs
+description: A TypeScript program to deploy a virtual machine on Amazon EC2
