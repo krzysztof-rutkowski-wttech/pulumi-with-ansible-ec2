@@ -2,13 +2,16 @@ import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import { local } from "@pulumi/command";
 
+const stackName = pulumi.getStack();
+const instanceName = `${stackName}-server-for-pulumi-testing-purposes`;
+const instanceNameTag = `${stackName}-pulumi-ansible`;
 const config = new pulumi.Config();
 const instanceType = config.get("instanceType") || "t3.micro";
 const vpcNetworkCidr = config.get("vpcNetworkCidr") || "10.0.0.0/16";
 const publicKey = config.get("publicKey") || '';
-const privateKeyPath = './rsa';
+const privateKeyPath = `./${config.get("privateKeyName")}` || './rsa';
 
-const deployer = new aws.ec2.KeyPair("deployer", { publicKey, keyName: 'pulumi-ansible-instance-key' });
+const deployer = new aws.ec2.KeyPair("deployer", { publicKey, keyNamePrefix: 'pulumi-ansible-instance-key-' });
 
 // Look up the latest Amazon Linux 2 AMI.
 const ami = aws.ec2.getAmi({
@@ -55,7 +58,7 @@ const routeTableAssociation = new aws.ec2.RouteTableAssociation("routeTableAssoc
     routeTableId: routeTable.id,
 });
 
-// Create a security group allowing inbound access over port 80 and outbound
+// Create a security group allowing inbound access over port 80 and 22 and outbound,
 // access to anywhere.
 const secGroup = new aws.ec2.SecurityGroup("secGroup-krut", {
     description: "Enable HTTP access",
@@ -81,16 +84,16 @@ const secGroup = new aws.ec2.SecurityGroup("secGroup-krut", {
 });
 
 // Create and launch an EC2 instance into the public subnet.
-const server = new aws.ec2.Instance("server-for-pulumi-testing-purposes", {
+const server = new aws.ec2.Instance(instanceName, {
     instanceType: instanceType,
     subnetId: subnet.id,
     vpcSecurityGroupIds: [secGroup.id],
     userData: userData,
     ami: ami,
     tags: {
-        Name: "pulumi-ansible-test",
+        Name: instanceNameTag,
     },
-    keyName: 'pulumi-ansible-instance-key'
+    keyName: deployer.keyName
 }, {
     dependsOn: [ deployer ]
 });
@@ -120,4 +123,3 @@ const playAnsiblePlaybookCmd = new local.Command("playAnsiblePlaybookCmd", {
 export const ip = server.publicIp;
 export const hostname = server.publicDns;
 export const url = pulumi.interpolate`http://${server.publicDns}`;
-export const renderPlaybookCmdId = renderPlaybookCmd.id;
