@@ -108,7 +108,7 @@ const renderPlaybookCmd = new local.Command("renderPlaybookCmd", {
 
 // Play the Ansible playbook to finish installing.
 const playAnsiblePlaybookCmd = new local.Command("playAnsiblePlaybookCmd", {
-    create: pulumi.interpolate`ansible-playbook \
+    create: pulumi.interpolate`ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
     -u ec2-user -i '${server.publicIp},' \
     --private-key ${privateKeyPath} \
     playbook_rendered.yaml`

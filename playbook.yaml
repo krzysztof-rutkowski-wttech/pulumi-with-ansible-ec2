@@ -3,6 +3,16 @@
 - hosts: ${HOST_IP_ADDRESS}
   become: true
   tasks:
+
+    - name: Wait for the instances to boot by checking the ssh port
+      wait_for:
+        host: ${HOST_IP_ADDRESS}
+        port: 22
+        delay: 60
+        timeout: 320
+        state: started
+        msg: "EC2 instance port is not Listening"
+
     - name: Install Nginx web server
       command: amazon-linux-extras install nginx1.12=latest -y
       args:
