@@ -20,7 +20,7 @@ Install nodeJS modules for the project:
 $ npm install
 ```
 
-Use pulumi command line tool to configure a project.
+Use pulumi command line tool to configure the project.
 First initialize stack:
 ```sh
 $ pulumi stack init [<org-name>/]<stack-name>
@@ -29,12 +29,12 @@ for example:
 ```sh
 $ pulumi stack init my-organization/dev
 ```
-Then select the stack ('pulumi-ec2' is the project name defined in Pulumi.yaml file)
+Then select the stack (`pulumi-ec2` is the project name defined in `Pulumi.yaml` file)
 ```sh
 $ pulumi stack select [<org-name>/]pulumi-ec2/<stack-name>
 ```
 
-Set up basic Pulumi configuration for AWS and EC2 instance. In this example 'rnd' profile will be used.
+Set up basic Pulumi configuration for AWS and EC2 instance. In this example `rnd` profile will be used.
 
 ```sh
 $ pulumi config set aws:profile rnd && \
@@ -43,10 +43,10 @@ pulumi config set pulumi-ec2:instanceType t3.micro && \
 pulumi config set pulumi-ec2:vpcNetworkCidr 10.0.0.0/16
 ```
 
-Now config file for the selected stack should be created and found in the file 'Pulumi.\<stack-name>.yaml' (e.g. Pulumi.dev.yaml).
+Now config file for the selected stack should be created and found in the file `Pulumi.<stack-name>.yaml` (e.g. `Pulumi.dev.yaml`).
 
 To be able to access EC2 instance via ssh a security key pair is needed.
-Run the command to create one ('mykey' is an example of key name):
+Run the command to create one (`mykey` is an example of key name):
 ```sh
 ssh-keygen -t rsa -b 2048 -f mykey
 ```
@@ -80,7 +80,7 @@ Outputs:
     url     : "http://<domain-name-address>"
 ```
 
-Open http://\<domain-name-address> or http://\<ip-address> in the web browser and see the page content that should look like the following text:
+Open `http://<domain-name-address>` or `http://<ip-address>` in the web browser and see the page content that should look like the following text:
 
 ```sh
 Hello from 3.120.157.17 :-)
